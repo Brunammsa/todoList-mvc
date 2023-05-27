@@ -23,6 +23,11 @@
             "Bruna\\TodoListMvc\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Bruna\\TodoListMvc\\Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "brunammsa"
