@@ -20,10 +20,10 @@ class Task
         #[Column(nullable: false)]
         public string $name,
 
-        #[Column(nullable: true)]
+        #[Column(nullable: true, options:['default'=>null])]
         public ?DateTime $deleteAt,
 
-        #[Column(nullable: false)]
+        #[Column(nullable: false, options:['default'=>false])]
         public bool $done
     ) {
     }
