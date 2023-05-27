@@ -13,7 +13,7 @@ class TaskListController implements IController
 
     public function process(): void
     {
-        $todoList = $this->taskRepository->findAll();
+        $tasks = $this->taskRepository->findAll();
 
         require_once __DIR__ . '/../../views/task/index.html.php';
     }
