@@ -21,10 +21,21 @@ class Task
         public string $name,
 
         #[Column(nullable: true, options:['default'=>null])]
-        public ?DateTime $deleteAt,
+        public ?DateTime $deleteAt = null,
 
         #[Column(nullable: false, options:['default'=>false])]
-        public bool $done
+        public bool $done = false
     ) {
+    }
+
+    public function toggleDone(): void
+    {
+        $isDone = $this->done;
+
+        if ($isDone) {
+            $this->done = false;
+        } else {
+            $this->done = true;
+        }
     }
 }
