@@ -2,23 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Bruna\TodoListMvc\tests;
+namespace Bruna\TodoListMvc\Tests;
 
 use Bruna\TodoListMvc\Connection\ConnectionCreator;
+use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
-class TestConnectionTest extends TestCase
+class ConnectionCreatorTest extends TestCase
 {
     public function testIfReturnsObject(): void
     {
         $pdo = ConnectionCreator::createEntityManager();
 
-        $result = is_object($pdo);
-
-        $expect = true;
-
-        $this->assertEquals($expect, $result);
+        $this->assertInstanceOf(EntityManager::class, $pdo);
     }
 }
