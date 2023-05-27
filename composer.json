@@ -13,8 +13,11 @@
         "phpunit/phpunit": "^9.6"
     },
     "scripts": {
-        "tests": "php vendor/bin/phpunit tests/ --colors --verbose --testdox"
-    },
+        "tests": "php vendor/bin/phpunit tests/ --colors --verbose --testdox",
+        "migrate": "php vendor/bin/doctrine-migrations migrations:migrate",
+        "diff": "php vendor/bin/doctrine-migrations migrations:diff",
+        "doctrine": "php bin/doctrine.php"
+        },
     "autoload": {
         "psr-4": {
             "Bruna\\TodoListMvc\\": "src/"
