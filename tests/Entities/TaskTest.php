@@ -14,6 +14,7 @@ class TaskTest extends TestCase
         $task->toggleDone();
 
         $this->assertTrue($task->done);
+        
     }
 
     public function testToggleNotDone(): void
