@@ -29,6 +29,36 @@ class Task
     ) {
     }
 
+    public function getNameTask(): string
+    {
+        return $this->name;
+    }
+
+    public function setNameTask(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function getDeleteAt(): ?DateTime
+    {
+        return $this->deleteAt;
+    }
+
+    public function setDeleteAt(DateTime $datetime): void
+    {
+        $this->deleteAt = $datetime;
+    }
+
+    public function setDoneTask(bool $done): void
+    {
+        $this->done = $done;
+    }
+
+    public function getDone(): bool
+    {
+        return $this->done;
+    }
+
     public function toggleDone(): void
     {
         $isDone = $this->done;
@@ -39,4 +69,5 @@ class Task
             $this->done = true;
         }
     }
+
 }
