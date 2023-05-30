@@ -19,11 +19,12 @@ $httpMethod = $_SERVER['REQUEST_METHOD'];
 $key = "$httpMethod|$pathInfo";
 
 if (array_key_exists($key, $routes)) {
-    $controllerClasse = $routes["$httpMethod|$pathInfo"];
+    $controllerClasse = $routes[$key][0];
+    $methodName = $routes[$key][1];
 
     $controller = new $controllerClasse($taskRepository);
 } else {
     $controller = new Error404Controller();
 }
 
-$controller->process();
+$controller->$methodName();
