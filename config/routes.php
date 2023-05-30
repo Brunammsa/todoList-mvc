@@ -5,7 +5,7 @@ use Bruna\TodoListMvc\Controller\TaskController;
 
 return [
     'GET|/' => [TaskController::class, 'index'],
-    'POST|/new-task' => [TaskController::class, 'add'],
-    'GET|/remove-task' => [TaskController::class, 'remove'],
-    'POST|/update-task' => [TaskController::class. 'update']
+    'POST|/task' => [TaskController::class, 'add'],
+    'DELETE|/task/{id}' => [TaskController::class, 'remove'],
+    'PUT|/task' => [TaskController::class. 'update']
 ];
