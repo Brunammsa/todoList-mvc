@@ -6,10 +6,11 @@ namespace Bruna\TodoListMvc\Repositories;
 
 use Bruna\TodoListMvc\Connection\ConnectionCreator;
 use Bruna\TodoListMvc\Entities\Task;
+use Bruna\TodoListMvc\Interface\ITaskRepository;
 use DateTime;
 use Doctrine\ORM\EntityRepository;
 
-class TaskRepository extends EntityRepository
+class TaskRepository extends EntityRepository implements ITaskRepository
 {
     public function add(Task $task): bool
     {
