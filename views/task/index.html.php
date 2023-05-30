@@ -5,7 +5,7 @@ require_once __DIR__ . '/../inicio-html.php';
 <div class="container mt-5">
     <h2>Todo List</h2>
 
-    <form class="mb-3" action="/new-task" method="post">
+    <form class="mb-3" action="/task" method="post">
         <div class="form-group row">
             <div class="col-11">
                 <input class="form-control" type="text" name="task-name" placeholder="Qual a próxima tarefa?">
@@ -24,7 +24,10 @@ require_once __DIR__ . '/../inicio-html.php';
                     <input type="checkbox">
                     <?= $task->name; ?>
                 </span>
-                <button type="button" class="btn btn-danger">Remove</button>
+                <form action="/task/<?= $task->id; ?>" method="post">
+                    <input type="hidden" name="_method" value="delete">
+                    <input type="submit" class="btn btn-danger" value="Remove">
+                </form>
             </li>
         <?php endforeach ?>
     </ul>
