@@ -13,7 +13,9 @@ class TaskController
 
     public function index(): void
     {
-        $tasks = $this->taskRepository->findAll();
+        $tasks = $this->taskRepository->findBy([
+            'deleteAt' => null
+        ]);
 
         require_once __DIR__ . '/../../views/task/index.html.php';
     }
@@ -23,7 +25,7 @@ class TaskController
         $tarefa = filter_input(INPUT_POST, 'task-name');
 
         if (!$tarefa) {
-            header('Location: /?sucesso=0');
+            header('Location: /');
             exit();
         }
 
@@ -32,28 +34,27 @@ class TaskController
         $sucess = $this->taskRepository->add($task);
 
         if (!$sucess) {
-            header('Location: /?sucesso=0');
+            header('Location: /');
         } else {
-            header('Location: /?sucesso=1');
+            header('Location: /');
         }
     }
 
     public function remove(): void
     {
-        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        $uri = $_SERVER['PATH_INFO'];
+        $pattern = '{\w+/(\d+)}';
 
-        if (!$id || is_null($id)) {
-            header('Location: /?sucesso=0');
-            exit();
+        if (preg_match($pattern, $uri, $matches)) {
+            if (count($matches) < 2) {
+                header('Location: /');
+                exit();
+            }
+
+            $id = $matches[1];
+            $this->taskRepository->remove(intval($id));
         }
-
-        $sucess = $this->taskRepository->remove($id);
-
-        if (!$sucess) {
-            header('Location: /?sucesso=0');
-        } else {
-            header('Location: /?sucesso=1');
-        }
+        header('Location: /');
     }
 
     public function update(): void
@@ -61,14 +62,14 @@ class TaskController
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
         if (!$id || is_null($id)) {
-            header('Location: /?sucesso=0');
+            header('Location: /');
             exit();
         }
 
         $tarefa = filter_input(INPUT_POST, 'new-task');
 
         if (!$tarefa) {
-            header('Location: /?sucesso=0');
+            header('Location: /');
             exit();
         }
 
@@ -78,11 +79,9 @@ class TaskController
         $sucess = $this->taskRepository->update($task);
 
         if ($sucess === false) {
-            header('Location: /?sucesso=0');
+            header('Location: /');
         } else {
-            header('Location: /?sucesso=1');
+            header('Location: /');
         }
     }
-
-
 }
