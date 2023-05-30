@@ -2,9 +2,7 @@
 
 namespace Bruna\TodoListMvc\Controller;
 
-use Bruna\TodoListMvc\Interface\IController;
-
-class Error404Controller implements IController
+class Error404Controller
 {
     public function process(): void
     {
