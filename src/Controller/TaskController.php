@@ -2,6 +2,7 @@
 
 namespace Bruna\TodoListMvc\Controller;
 
+use Bruna\TodoListMvc\Connection\ConnectionCreator;
 use Bruna\TodoListMvc\Repositories\TaskRepository;
 use Bruna\TodoListMvc\Entities\Task;
 
@@ -17,23 +18,27 @@ class TaskController
             'deleteAt' => null
         ]);
 
+        $taskDone = $this->taskRepository->findBy([
+            'done' => true
+        ]);
+
         require_once __DIR__ . '/../../views/task/index.html.php';
     }
 
     public function add(): void
     {
-        $tarefa = filter_input(INPUT_POST, 'task-name');
+        $taskName = filter_input(INPUT_POST, 'task-name');
 
-        if (!$tarefa) {
+        if (!$taskName) {
             header('Location: /');
             exit();
         }
 
-        $task = new Task($tarefa);
+        $task = new Task($taskName);
 
-        $sucess = $this->taskRepository->add($task);
+        $success = $this->taskRepository->add($task);
 
-        if (!$sucess) {
+        if (!$success) {
             header('Location: /');
         } else {
             header('Location: /');
@@ -59,6 +64,14 @@ class TaskController
 
     public function update(): void
     {
+        $entityManager = ConnectionCreator::createEntityManager();
+        $taskRepository = $entityManager->getRepository(Task::class);
+
+        if (isset($_POST['checkbox-task']) && $_POST['checkbox-task'] == '1')
+        {
+            $taskRepository->toggleDone();
+        }
+
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
         if (!$id || is_null($id)) {
@@ -76,12 +89,14 @@ class TaskController
         $task = new Task($tarefa);
         $task->id = $id;
 
-        $sucess = $this->taskRepository->update($task);
+        $success = $this->taskRepository->update($task);
 
-        if ($sucess === false) {
+        if ($success === false) {
             header('Location: /');
         } else {
             header('Location: /');
         }
+
+        require_once __DIR__ . '/../../views/task/index.html.php';
     }
 }
