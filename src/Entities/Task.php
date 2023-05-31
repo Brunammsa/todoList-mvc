@@ -69,5 +69,4 @@ class Task
             $this->done = true;
         }
     }
-
 }
