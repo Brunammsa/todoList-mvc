@@ -20,7 +20,7 @@ require_once __DIR__ . '/../inicio-html.php';
     <ul class="list-group">
         <?php foreach ($tasks as $task) : ?>
             <li class="list-group-item list-group-item-action d-flex justify-content-between">
-                <form action="/task" method="get">
+                <form action="/task" method="post">
                     <span>
                         <input type="checkbox" name="checkbox-task" value="1">
                         <?= $task->name; ?>
@@ -36,9 +36,6 @@ require_once __DIR__ . '/../inicio-html.php';
             Progresso <?= count($taskDone) . '/' . count($tasks) ;?>
         </p>
     </ul>
-    <div>
-
-    </div>
 </div>
 
 <?php require_once __DIR__ . '/../fim-html.php';
