@@ -5,6 +5,9 @@ declare(strict_types=1);
 use Bruna\TodoListMvc\Connection\ConnectionCreator;
 use Bruna\TodoListMvc\Controller\Error404Controller;
 use Bruna\TodoListMvc\Entities\Task;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7Server\ServerRequestCreator;
+use Psr\Http\Message\ResponseInterface;
 
 require_once __DIR__ . './../vendor/autoload.php';
 
@@ -37,8 +40,22 @@ if (array_key_exists($key, $routes)) {
     $controller = new $controllerClasse($taskRepository);
 } else {
     $controller = new Error404Controller();
-    $controller->process();
-    exit;
 }
 
-$controller->$methodName();
+$psr17Factory = new Psr17Factory();
+
+$creator = new ServerRequestCreator(
+    $psr17Factory, // ServerRequestFactory
+    $psr17Factory, // UriFactory
+    $psr17Factory, // UploadedFileFactory
+    $psr17Factory  // StreamFactory
+);
+
+$request = $creator->fromGlobals();
+
+$response = $controller->$methodName($request);
+
+$teste = http_response_code($response->getStatusCode());
+var_dump($teste);
+
+$response->getBody();
