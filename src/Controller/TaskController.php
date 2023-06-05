@@ -5,9 +5,16 @@ namespace Bruna\TodoListMvc\Controller;
 use Bruna\TodoListMvc\Connection\ConnectionCreator;
 use Bruna\TodoListMvc\Repositories\TaskRepository;
 use Bruna\TodoListMvc\Entities\Task;
+use Bruna\TodoListMvc\Traits\FlashMessageTrait;
+use Bruna\TodoListMvc\Traits\HtmlRendererTrait;
+use Nyholm\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class TaskController
 {
+    use FlashMessageTrait, HtmlRendererTrait;
+
     public function __construct(private TaskRepository $taskRepository)
     {
     }
@@ -22,16 +29,21 @@ class TaskController
             'done' => true
         ]);
 
-        require_once __DIR__ . '/../../views/task/index.html.php';
+        echo $this->renderTemplate('index.html', [
+            'tasks' => $tasks,
+            'taskDone' => $taskDone
+        ]);
     }
 
-    public function add(): void
+    public function add(ServerRequestInterface $request): ResponseInterface
     {
-        $taskName = filter_input(INPUT_POST, 'task-name');
+        $requestBody = $request->getParsedBody();
+        $taskName = filter_var($requestBody['task-name']);
 
         if (!$taskName) {
-            header('Location: /');
-            exit();
+            return new Response(302, [
+                'Location' => '/'
+            ]);
         }
 
         $task = new Task($taskName);
@@ -39,51 +51,63 @@ class TaskController
         $success = $this->taskRepository->add($task);
 
         if (!$success) {
-            header('Location: /');
-        } else {
-            header('Location: /');
+            $this->addErrorMessage('Erro ao inserir nova tarefa');
+
+            return new Response(302, [
+                'Location' => '/'
+            ]);
         }
+
+        return new Response(200, [
+            'Location' => '/'
+        ]);
     }
 
-    public function remove(): void
+    public function remove(): ResponseInterface
     {
         $uri = $_SERVER['PATH_INFO'];
         $pattern = '{\w+/(\d+)}';
 
         if (preg_match($pattern, $uri, $matches)) {
+
             if (count($matches) < 2) {
-                header('Location: /');
-                exit();
+                return new Response(302, [
+                    'Location' => '/'
+                ]);
             }
 
             $id = $matches[1];
             $this->taskRepository->remove(intval($id));
+
+            return new Response(200, [
+                'Location' => '/'
+            ]);
         }
-        header('Location: /');
     }
 
-    public function update(): void
+    public function update(): ResponseInterface
     {
         $entityManager = ConnectionCreator::createEntityManager();
         $taskRepository = $entityManager->getRepository(Task::class);
 
-        if (isset($_POST['checkbox-task']) && $_POST['checkbox-task'] == '1')
-        {
+        if (isset($_POST['checkbox-task']) && $_POST['checkbox-task'] == '1') {
             $taskRepository->toggleDone();
         }
 
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
         if (!$id || is_null($id)) {
-            header('Location: /');
-            exit();
+            return new Response(302, [
+                'Location' => '/'
+            ]);
         }
 
         $tarefa = filter_input(INPUT_POST, 'new-task');
 
         if (!$tarefa) {
-            header('Location: /');
-            exit();
+            return new Response(302, [
+                'Location' => '/'
+            ]);
         }
 
         $task = new Task($tarefa);
@@ -91,12 +115,18 @@ class TaskController
 
         $success = $this->taskRepository->update($task);
 
-        if ($success === false) {
-            header('Location: /');
-        } else {
-            header('Location: /');
+        if (!$success) {
+            $this->addErrorMessage('Erro ao atualizar tarefa');
+
+            return new Response(302, [
+                'Location' => '/'
+            ]);
         }
 
-        require_once __DIR__ . '/../../views/task/index.html.php';
+        return new Response(200, [
+            'Location' => '/'
+        ]);
+
+        echo $this->renderTemplate('index.html');
     }
 }
