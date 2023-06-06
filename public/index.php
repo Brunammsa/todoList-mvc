@@ -53,9 +53,16 @@ $creator = new ServerRequestCreator(
 
 $request = $creator->fromGlobals();
 
+/** @var ResponseInterface $response */
+
 $response = $controller->$methodName($request);
 
-$teste = http_response_code($response->getStatusCode());
-var_dump($teste);
+http_response_code($response->getStatusCode());
 
-$response->getBody();
+foreach ($response->getHeaders() as $name => $values) {
+    foreach ($values as $value) {
+        header(sprintf('%s: %s', $name, $value), false);
+    }
+}
+
+echo $response->getBody();
