@@ -19,7 +19,7 @@ class TaskController
     {
     }
 
-    public function index(): void
+    public function index(): ResponseInterface
     {
         $tasks = $this->taskRepository->findBy([
             'deleteAt' => null
@@ -29,10 +29,12 @@ class TaskController
             'done' => true
         ]);
 
-        echo $this->renderTemplate('index.html', [
+        $html = $this->renderTemplate('index.html', [
             'tasks' => $tasks,
             'taskDone' => $taskDone
         ]);
+
+        return new Response(200, body: $html);
     }
 
     public function add(ServerRequestInterface $request): ResponseInterface
@@ -78,14 +80,15 @@ class TaskController
 
             $id = $matches[1];
             $this->taskRepository->remove(intval($id));
-
-            return new Response(200, [
-                'Location' => '/'
-            ]);
         }
+
+        return new Response(200, [
+            'Location' => '/'
+        ]);
+
     }
 
-    public function update(): ResponseInterface
+    public function update(ServerRequestInterface $request): ResponseInterface
     {
         $entityManager = ConnectionCreator::createEntityManager();
         $taskRepository = $entityManager->getRepository(Task::class);
@@ -94,7 +97,8 @@ class TaskController
             $taskRepository->toggleDone();
         }
 
-        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        $queryParams = $request->getQueryParams();
+        $id = filter_var($queryParams['id'], FILTER_VALIDATE_INT);
 
         if (!$id || is_null($id)) {
             return new Response(302, [
@@ -102,7 +106,8 @@ class TaskController
             ]);
         }
 
-        $tarefa = filter_input(INPUT_POST, 'new-task');
+        $requestBody = $request->getParsedBody();
+        $tarefa = filter_var($requestBody['new-task']);
 
         if (!$tarefa) {
             return new Response(302, [
