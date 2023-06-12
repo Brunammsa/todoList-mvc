@@ -6,16 +6,19 @@ use Bruna\TodoListMvc\Connection\ConnectionCreator;
 use Bruna\TodoListMvc\Repositories\TaskRepository;
 use Bruna\TodoListMvc\Entities\Task;
 use Bruna\TodoListMvc\Traits\FlashMessageTrait;
-use Bruna\TodoListMvc\Traits\HtmlRendererTrait;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use League\Plates\Engine;
 
 class TaskController
 {
-    use FlashMessageTrait, HtmlRendererTrait;
+    use FlashMessageTrait;
 
-    public function __construct(private TaskRepository $taskRepository)
+    public function __construct(
+        private TaskRepository $taskRepository,
+        private Engine $templates
+        )
     {
     }
 
@@ -29,7 +32,7 @@ class TaskController
             'done' => true
         ]);
 
-        $html = $this->renderTemplate('index.html', [
+        $html = $this->templates->render('index.html', [
             'tasks' => $tasks,
             'taskDone' => $taskDone
         ]);
