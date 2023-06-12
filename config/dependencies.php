@@ -7,6 +7,7 @@ use Bruna\TodoListMvc\Repositories\TaskRepository;
 use DI\ContainerBuilder;
 use Psr\Container\ContainerInterface;
 use Bruna\TodoListMvc\Connection\ConnectionCreator;
+use League\Plates\Engine;
 
 $builder = new ContainerBuilder();
 
@@ -16,6 +17,10 @@ $builder->addDefinitions([
             $taskRepository = $entityManager->getRepository(Task::class);
             return $taskRepository;
         },
+        Engine::class => function () {
+            $templatePath = __DIR__ . '/../views';
+            return new Engine($templatePath);
+        }
     ]);
 
 
